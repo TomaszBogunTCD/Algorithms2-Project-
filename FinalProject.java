@@ -3,12 +3,38 @@ import java.util.regex.Pattern;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.io.File;
 import java.io.FileNotFoundException;
-		
+
+/*
+ * Auxiliary class to help maintain and sort trip details.
+ * */
+class Pair implements Comparable<Pair> {
+	String tripId;
+	String stops;
+
+	public Pair(String tpid) {
+		tripId = tpid;
+		stops = "";
+	}
+
+	public Pair(String tpid, String stps) {
+		tripId = tpid;
+		stops = stps;
+	}
+
+	@Override
+	public int compareTo(Pair o) {
+		return this.tripId.compareTo(o.tripId);
+	}
+}
+
 public class FinalProject {
-	
+    public static final String pathToStopTimes = "stop_times.txt";
+
 	/*
 	 * Return string array containing one string element "1" if stop1 doesn't exist
 	 * Return string array containing one string element "2" if stop2 doesn't exist
@@ -28,15 +54,72 @@ public class FinalProject {
 	public static String[] getStopInformation(String name) {
 		return null; //return Trips[]
 	}
+
+	/*
+	 * Return true if time is a valid time entry. Else false.
+	 * */
+	public static Boolean checkValidTime(String time) {
+		String[] stringComponents = time.split(":");
+		int temp = Integer.parseInt(stringComponents[0]);
+		if(temp < 0 || temp > 23) {
+			return false;
+		}
+		for(int i = 1; i <= 2; ++i) {
+			temp = Integer.parseInt(stringComponents[i]);
+			if(temp < 0 || temp > 59){
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	/*
 	 * Return empty string array if no stops exist with the given arrival time
 	 * Otherwise, return a string array of the details of all stops, sorted by their trip id
 	 * Look at project specification for details
 	 * */
-	public static String[] searchForTripsByArrivalTime(int hour, int minute, int second) {
-		return null; //return Trips[]
-	}
+	public static String[] searchForTripsByArrivalTime(String inputString) {
+		List<Pair> validTripIdsAndStops = Collections.emptyList();
+        String readString = "";
+        String[] splitStrings = new String[9];
+        Scanner reader = new Scanner(pathToStopTimes);
+		String lastTripId = "";
+		Boolean lastTripWasValid = false;
+		String stopsInLastTrip = "";
+        while(reader.hasNextLine()) {
+            readString = reader.nextLine();
+            splitStrings = readString.split(",");
+			if(checkValidTime(splitStrings[1])) {
+				if(splitStrings[0] != lastTripId) {
+					if(lastTripWasValid) {
+						validTripIdsAndStops.add(new Pair(lastTripId, stopsInLastTrip));
+					}
+					lastTripWasValid = false;
+					stopsInLastTrip = splitStrings[3];
+					lastTripId = splitStrings[0];
+				} else {
+					stopsInLastTrip += " -> " + splitStrings[3];
+				}
+				if(splitStrings[1] == inputString) {
+					lastTripWasValid = true;
+				}
+			}
+        }
+        if(validTripIdsAndStops.size()==0)
+		{
+			reader.close();
+            return new String[0];
+		}
+        String[] array_ans = new String[validTripIdsAndStops.size()];
+		Collections.sort(validTripIdsAndStops);
+		int i = 0;
+		// Using foreach as order is preserved in it
+		for (Pair p : validTripIdsAndStops) {
+			array_ans[i++] = "Trip Id: " + p.tripId + " with stops : " + p.stops;
+		}
+        reader.close();
+        return array_ans;
+    }
 	
 	public static void main(String[] args) {
 		System.out.println("Choose one of of three functionalities");
@@ -166,7 +249,7 @@ public class FinalProject {
 					}
 				}
 			}
-			String[] result = searchForTripsByArrivalTime(hours, minutes, seconds);
+			String[] result = searchForTripsByArrivalTime(inputString);
 			if(result.length == 0) {
 				System.out.println("No trips exist with this arrival time");
 			}else{
