@@ -9,9 +9,6 @@ import java.util.Random;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-/*
- * Auxiliary class to help maintain and sort trip details.
- * */
 class Pair implements Comparable<Pair> {
 	String tripId;
 	String stops;
@@ -55,9 +52,6 @@ public class FinalProject {
 		return null; //return Trips[]
 	}
 
-	/*
-	 * Return true if time is a valid time entry. Else false.
-	 * */
 	public static Boolean checkValidTime(String time) {
 		String[] stringComponents = time.split(":");
 		int temp = Integer.parseInt(stringComponents[0]);
@@ -105,6 +99,9 @@ public class FinalProject {
 				}
 			}
         }
+       if(lastTripWasValid) {
+		validTripIdsAndStops.add(new Pair(lastTripId, stopsInLastTrip));
+	}
         if(validTripIdsAndStops.size()==0)
 		{
 			reader.close();
