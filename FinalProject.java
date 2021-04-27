@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -10,115 +11,145 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 class Pair implements Comparable<Pair> {
-	String tripId;
-	String stops;
+  String tripId;
+  String stops;
 
-	public Pair(String tpid) {
-		tripId = tpid;
-		stops = "";
-	}
+  public Pair(String tpid) {
+    tripId = tpid;
+    stops = "";
+  }
 
-	public Pair(String tpid, String stps) {
-		tripId = tpid;
-		stops = stps;
-	}
+  public Pair(String tpid, String stps) {
+    tripId = tpid;
+    stops = stps;
+  }
 
-	@Override
-	public int compareTo(Pair o) {
-		return this.tripId.compareTo(o.tripId);
-	}
+  @Override
+  public int compareTo(Pair o) {
+    return this.tripId.compareTo(o.tripId);
+  }
 }
 
 public class FinalProject {
-    public static final String pathToStopTimes = "stop_times.txt";
+  public static final String pathToStopTimes = "stop_times.txt";
 
-	/*
-	 * Return string array containing one string element "1" if stop1 doesn't exist
-	 * Return string array containing one string element "2" if stop2 doesn't exist
-	 * Return empty string array if no path between exists between stop1 and stop2
-	 * Otherwise, return a string array of the details of all stops traversed by the shortest path, with its cost by each stop
-	 * Look at project specification for details
-	 * */
-	public static String[] getShortestRoute(String stop1, String stop2) {
-		return null; //return Trips[]
-	}
-	
-	/*
-	 * Return empty string array if no stops exist containing the string name
-	 * Otherwise, return string array of the details of all stops containing the string name
-	 * Look at project specification for details
-	 * */
-	public static String[] getStopInformation(String name) {
-		return null; //return Trips[]
-	}
+  /*
+   * Return string array containing one string element "1" if stop1 doesn't exist
+   * Return string array containing one string element "2" if stop2 doesn't exist
+   * Return empty string array if no path between exists between stop1 and stop2
+   * Otherwise, return a string array of the details of all stops traversed by the shortest path, with its cost by each stop
+   * Look at project specification for details
+   * */
+  public static String[] getShortestRoute(String stop1, String stop2) {
+    return null; //return Trips[]
+  }
 
-	public static Boolean checkValidTime(String time) {
-		String[] stringComponents = time.split(":");
-		int temp = Integer.parseInt(stringComponents[0]);
-		if(temp < 0 || temp > 23) {
-			return false;
-		}
-		for(int i = 1; i <= 2; ++i) {
-			temp = Integer.parseInt(stringComponents[i]);
-			if(temp < 0 || temp > 59){
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	/*
-	 * Return empty string array if no stops exist with the given arrival time
-	 * Otherwise, return a string array of the details of all stops, sorted by their trip id
-	 * Look at project specification for details
-	 * */
-	public static String[] searchForTripsByArrivalTime(String inputString) {
-		List<Pair> validTripIdsAndStops = Collections.emptyList();
-        String readString = "";
-        String[] splitStrings = new String[9];
-        Scanner reader = new Scanner(pathToStopTimes);
-		String lastTripId = "";
-		Boolean lastTripWasValid = false;
-		String stopsInLastTrip = "";
-        while(reader.hasNextLine()) {
-            readString = reader.nextLine();
-            splitStrings = readString.split(",");
-			if(checkValidTime(splitStrings[1])) {
-				if(splitStrings[0] != lastTripId) {
-					if(lastTripWasValid) {
-						validTripIdsAndStops.add(new Pair(lastTripId, stopsInLastTrip));
-					}
-					lastTripWasValid = false;
-					stopsInLastTrip = splitStrings[3];
-					lastTripId = splitStrings[0];
-				} else {
-					stopsInLastTrip += " -> " + splitStrings[3];
-				}
-				if(splitStrings[1] == inputString) {
-					lastTripWasValid = true;
-				}
-			}
+  /*
+   * Return empty string array if no stops exist containing the string name
+   * Otherwise, return string array of the details of all stops containing the string name
+   * Look at project specification for details
+   * */
+  public static String[] getStopInformation(String name) {
+    return null; //return Trips[]
+  }
+
+  public static Boolean checkValidTime(String time) {
+    try {
+      String[] stringComponents = time.split(":");
+      int temp = Integer.parseInt(stringComponents[0].trim());
+      if (temp < 0 || temp > 23) {
+        return false;
+      }
+      for (int i = 1; i <= 2; ++i) {
+        temp = Integer.parseInt(stringComponents[i]);
+        if (temp < 0 || temp > 59) {
+          return false;
         }
-       if(lastTripWasValid) {
-		validTripIdsAndStops.add(new Pair(lastTripId, stopsInLastTrip));
-	}
-        if(validTripIdsAndStops.size()==0)
-		{
-			reader.close();
-            return new String[0];
-		}
-        String[] array_ans = new String[validTripIdsAndStops.size()];
-		Collections.sort(validTripIdsAndStops);
-		int i = 0;
-		// Using foreach as order is preserved in it
-		for (Pair p : validTripIdsAndStops) {
-			array_ans[i++] = "Trip Id: " + p.tripId + " with stops : " + p.stops;
-		}
-        reader.close();
-        return array_ans;
+      }
+      return true;
+    } catch (Exception e) {
+      return false;
     }
-	
-	public static void main(String[] args){
+  }
+
+  public static Boolean compareTimes(String time1, String time2) {
+    try {
+      String[] stringComponents1 = time1.split(":");
+      String[] stringComponents2 = time2.split(":");
+      if (stringComponents1.length != stringComponents2.length) {
+        return false;
+      }
+      int temp1 = 0, temp2 = 0;
+      for (int i = 0; i < stringComponents1.length; ++i) {
+        temp1 = Integer.parseInt(stringComponents1[i].trim());
+        temp2 = Integer.parseInt(stringComponents2[i].trim());
+        if (temp1 != temp2) {
+          return false;
+        }
+      }
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  /*
+   * Return empty string array if no stops exist with the given arrival time
+   * Otherwise, return a string array of the details of all stops, sorted by their trip id
+   * Look at project specification for details
+   * */
+  public static String[] searchForTripsByArrivalTime(String inputString) {
+    List<Pair> validTripIdsAndStops = new LinkedList<>();
+    String readString = "";
+    String[] splitStrings = new String[9];
+    File fileObj = new File(pathToStopTimes);
+    try {
+      Scanner reader = new Scanner(fileObj);
+      String lastTripId = "";
+      Boolean lastTripWasValid = false;
+      String stopsInLastTrip = "";
+      while (reader.hasNextLine()) {
+        readString = reader.nextLine();
+        splitStrings = readString.split(",");
+        if (splitStrings.length > 2 && checkValidTime(splitStrings[1])) {
+          if (splitStrings[0].compareTo(lastTripId) != 0) {
+            if (lastTripWasValid) {
+              validTripIdsAndStops.add(new Pair(lastTripId, stopsInLastTrip));
+            }
+            lastTripWasValid = false;
+            stopsInLastTrip = splitStrings[3];
+            lastTripId = splitStrings[0];
+          } else {
+            stopsInLastTrip += " -> " + splitStrings[3];
+          }
+          if (compareTimes(inputString, splitStrings[1])) {
+            lastTripWasValid = true;
+          }
+        }
+      }
+      if (lastTripWasValid) {
+        validTripIdsAndStops.add(new Pair(lastTripId, stopsInLastTrip));
+      }
+      if (validTripIdsAndStops.size() == 0) {
+        reader.close();
+        return new String[0];
+      }
+      String[] array_ans = new String[validTripIdsAndStops.size()];
+      Collections.sort(validTripIdsAndStops);
+      int i = 0;
+      // Using foreach as order is preserved in it
+      for (Pair p : validTripIdsAndStops) {
+        array_ans[i++] = "Trip Id: " + p.tripId + " with stops : " + p.stops;
+      }
+      reader.close();
+      return array_ans;
+    } catch (Exception e) {
+      return new String[0];
+    }
+  }
+
+
+  public static void main(String[] args){
 		System.out.println("Choose one of of three functionalities");
 		System.out.println("1. Finding shortest paths between 2 bus stops");
 		System.out.println("2. Searching for a bus stop by full name or by the first few characters in the name");
