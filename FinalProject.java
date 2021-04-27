@@ -118,16 +118,17 @@ public class FinalProject {
         return array_ans;
     }
 	
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		System.out.println("Choose one of of three functionalities");
 		System.out.println("1. Finding shortest paths between 2 bus stops");
 		System.out.println("2. Searching for a bus stop by full name or by the first few characters in the name");
 		System.out.println("3. Searching for all trips with a given arrival time");
-		
+
 		Scanner scanner = new Scanner(System.in);
+		boolean exited = false;
 		boolean validInput = false;
 		int mode = -1;
-		while(!validInput) {
+		while(!validInput && !exited) {
 			System.out.print("Type either 1, 2 or 3 (or exit):");
 			String inputString = scanner.next();
 			try {
@@ -140,8 +141,7 @@ public class FinalProject {
 				}
 			}catch(NumberFormatException e){
 				if(inputString.equalsIgnoreCase("exit")) {
-					System.out.println("Exited");
-					validInput = true;
+					exited = true;
 				}else {
 					System.out.println("Input must be a sinlge digit number either 1, 2 or 3, not a string");
 				}
@@ -151,69 +151,87 @@ public class FinalProject {
 			String stop1 = "";
 			String stop2 = "";
 			boolean validInput1 = false;
-			while(!validInput1) {
+			stop1 = scanner.nextLine();
+			while(!validInput1 && !exited) {
 				System.out.print("Enter first bus stop name:");
-				stop1 = scanner.next();
-				if(Pattern.matches("[a-zA-Z]+", stop1)) {
+				while(!scanner.hasNextLine()) {}
+				stop1 = scanner.nextLine();
+				if(stop1.equalsIgnoreCase("exit")) {
+					exited = true;
+				}else if(Pattern.matches(".*[a-zA-Z]+.*", stop1)) {
 					validInput1 = true;
 				}else {
 					System.out.println("Please input text with at least one letter");
 				}
 			}
 			validInput1 = false;
-			while(!validInput1) {
+			//stop2 = scanner.nextLine();
+			while(!validInput1 && !exited) {
 				System.out.print("Enter second bus stop name:");
-				stop2 = scanner.next();
-				if(Pattern.matches("[a-zA-Z]+", stop2)) {
+				while(!scanner.hasNextLine()) {}
+				stop2 = scanner.nextLine();
+				if(stop2.equalsIgnoreCase("exit")) {
+					exited = true;
+				}else if(Pattern.matches(".*[a-zA-Z]+.*", stop2)) {
 					validInput1 = true;
 				}else {
 					System.out.println("Please input text with at least one letter");
 				}
 			}
-			String[] result = getShortestRoute(stop1, stop2);
-			if(result.length == 0) {
-				System.out.println("No path route exists between these stops");
-			}else if(result[0].equalsIgnoreCase("1") || result[0].equalsIgnoreCase("2")) {
-				System.out.println("Invalid bus stop " + result[0] + " name");
-			}else {
-				for(int i=0; i<result.length; i++) {
-					System.out.println(result[i]);
+			if(!exited){			
+				String[] result = getShortestRoute(stop1, stop2);
+				if(result.length == 0) {
+					System.out.println("No path route exists between these stops");
+				}else if(result[0].equalsIgnoreCase("1") || result[0].equalsIgnoreCase("2")) {
+					System.out.println("Invalid bus stop " + result[0] + " name");
+				}else if(result[0].equalsIgnoreCase("12")) {
+					System.out.println("Invalid bus stop 1 and bus stop 2");
+				}else {
+					for(int i=0; i<result.length; i++) {
+						System.out.println(result[i]);
+					}
 				}
 			}
-			
-			
+
+
 		}else if(mode == 2) {
 			boolean validInput2 = false;
 			String inputString = "";
-			while(!validInput2) {
+			while(!validInput2 && !exited) {
 				System.out.print("Enter the bus stop name:");
 				inputString = scanner.next();
-				if(Pattern.matches("[a-zA-Z]+", inputString)) {
+				if(inputString.equalsIgnoreCase("exit")) {
+					exited = true;
+				}else if(Pattern.matches(".*[a-zA-Z]+.*", inputString)) {
 					validInput2 = true;
 				}else {
 					System.out.println("Please input text with at least one letter");
 				}
 			}
-			String[] results = getStopInformation(inputString.toUpperCase());
-			if(results.length == 0) {
-				System.out.println("There are no stops with this name");
-			}else {
-				for(int i=0; i<results.length; i++) {
-					System.out.println(results[i]);
+			if(!exited) {
+				String[] results = getStopInformation(inputString.toUpperCase());
+				if(results.length == 0) {
+					System.out.println("There are no stops with this name");
+				}else {
+					for(int i=0; i<results.length; i++) {
+						System.out.println(results[i]);
+					}
 				}
 			}
-			
+
 		}else if(mode == 3){
 			boolean validInput3 = false;
 			String inputString = "";
 			int hours = 0;
 			int minutes = 0;
 			int seconds = 0;
-			while(!validInput3) {
+			while(!validInput3 && !exited) {
 				System.out.print("Enter the arrival time in the format hh:mm:ss :");
 				inputString = scanner.next();
 				String[] stringComponents = inputString.split(":");
-				if(stringComponents.length != 3) {
+				if(inputString.equalsIgnoreCase("exit")) {
+					exited = true;
+				}else if(stringComponents.length != 3) {
 					System.out.println("Please input 3 values, one each for hours, minutes, and seconds");
 				}else {
 					try {
@@ -246,14 +264,17 @@ public class FinalProject {
 					}
 				}
 			}
-			String[] result = searchForTripsByArrivalTime(inputString);
-			if(result.length == 0) {
-				System.out.println("No trips exist with this arrival time");
-			}else{
-				for(int i=0; i<result.length; i++) {
-					System.out.println(result[i]);
+			if(!exited) {
+				String[] result = searchForTripsByArrivalTime(inputString);
+				if(result.length == 0) {
+					System.out.println("No trips exist with this arrival time");
+				}else{
+					for(int i=0; i<result.length; i++) {
+						System.out.println(result[i]);
+					}
 				}
 			}
 		}
+		System.out.println("Exited");
 	}
 }
