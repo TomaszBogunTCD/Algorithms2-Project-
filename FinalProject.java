@@ -56,8 +56,8 @@ class Edge{
 class Graph{
 	public static int V;
 	public static int E;
-	public static List<List<Node>> adjList = new ArrayList<List<Node>>(); 
-	
+	public static List<List<Node>> adjList = new ArrayList<List<Node>>();
+
 	Graph(int V, int E){
 		Graph.V = V;
 		Graph.E = E;
@@ -65,7 +65,7 @@ class Graph{
 			adjList.add(new ArrayList<Node>());
 		}
 	}
-	
+
 	public static class Node implements Comparator<Node>{
 		int index;
 		double weight;
@@ -84,12 +84,12 @@ class Graph{
 		}
 	}
 
-	
+
 	void addNode(int src, int des, double weight) {
 		Node newNode = new Node(des, weight);
 		adjList.get(src).add(newNode);
 	}
-	
+
 	static String[] djikstrasAlgorithm(int src, int des) {
 		boolean nodesAdded[] = new boolean[V];
 		Arrays.fill(nodesAdded, false);
@@ -100,7 +100,7 @@ class Graph{
 		int prev[] = new int[V];
 		prev[src] = src;
 		Arrays.fill(prev, -1);
-		PriorityQueue<Node> nodeQueue = new PriorityQueue<Node>(V, new Node());		
+		PriorityQueue<Node> nodeQueue = new PriorityQueue<Node>(V, new Node());
 		nodeQueue.add(new Node(src, 0));
 		while(nodeQueue.size() > 0) {
 			Node currentNode = nodeQueue.poll();
@@ -136,7 +136,7 @@ class Graph{
 		stops = stopsReversed;
 		return stops;
 	}
-	
+
 }
 
 
@@ -155,7 +155,7 @@ public class FinalProject {
 			//checks if inputed stops exist and counts number of stops from stops file
 			BufferedReader stopsReaderPresent = new BufferedReader(new FileReader("src/stops.txt"));
 			int lineIndexStops = 0;
-			Boolean stop1Found = false; 
+			Boolean stop1Found = false;
 			Boolean stop2Found = false;
 			int stop1ID = 0;
 			int stop2ID = 0;
@@ -198,7 +198,7 @@ public class FinalProject {
 		stopTimesCurrentLine = stopTimesReader.readLine();
 		String transfersCurrentLine = stopTransfersReader.readLine();
 		transfersCurrentLine = stopTransfersReader.readLine();
-		
+
 		int numberOfEdges = 0;
 		//counts edges from stop_times file
 		int index = 0;
@@ -213,16 +213,16 @@ public class FinalProject {
 		}
 		stopTimesReader.close();
 		stopTransfersReader.close();
-		
+
 		Graph graph = new Graph(largestStopID+1, numberOfEdges);
-		
+
 		stopTimesReader = new BufferedReader(new FileReader("src/stop_times.txt"));
 		stopTransfersReader = new BufferedReader(new FileReader("src/transfers.txt"));
 		String stopTimesLastLine = stopTimesReader.readLine();
 		stopTimesCurrentLine = stopTimesReader.readLine();
 		transfersCurrentLine = stopTransfersReader.readLine();
 		transfersCurrentLine = stopTransfersReader.readLine();
-		
+
 		//fills graph with edges from stop_times file
 		String[] stopTimesLastLineComponents;
 		String[] stopTimesCurrentLineComponents;
