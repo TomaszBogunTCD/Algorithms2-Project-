@@ -256,6 +256,148 @@ public class FinalProject {
    * Look at project specification for details
    * */
   public static String[] getStopInformation(String name) {
+	  public class StopNode {
+
+ 	public char character;
+ 	public boolean isEnd;
+ 	public TernaryNode left, mid, right;
+	
+ 	public StopNode(char c) {
+ 	this.character = c;
+ 	}
+	}
+
+	public class StopSearchTree {
+
+ 		private TernaryNode root;
+
+			 /*
+  			  *         insert the nodes to SearchTree
+  			  */
+ 		String flagStop;
+ 		/*
+ 		*	Insert stops.txt into aray while accounting for stops with flagstops
+ 		*/
+ 		try {
+
+			String [] Stops = new String [8000];
+			Scanner scan = new Scanner (new File ("Trips.txt"));
+			
+			for (int i = 0; i < 8000; i++){
+				Stops[i] = scan.nextLine()
+				name = Stops[i]
+				
+				if (name.contains("wb")){
+					flagStops = name.replace("wb", " ");
+					flagStops = flagstops + " wb";
+						
+						}
+					else if(name.contains("nb")){
+					flagStops = name.replace("nb", " ");
+					flagStops = flagstops + " nb";
+					name = flagStops;
+						}
+					else if(name.contains("sb")){;
+					flagStops = name.replace("sb", " ")
+					flagStops = flagstops + " sb";
+					name = flagStops;
+						}
+					else if(name.contains("sb")){
+					flagStops = name.replace("sb", " ");
+					flagStops = flagstops + " sb";
+					name = flagStops;
+						
+						}	
+					
+			}
+		root = insert(root, name.toCharArray(), 0); 	
+		}
+		catch(FileNotFoundException exc){	
+		}
+	    return null; //return Trips[]
+	}
+  		
+ 		/*
+ 	 	* 		insert nodes into search tree by reading characters from the string
+ 	 	*/
+ 	private TernaryNode insert(TernaryNode root, char[] name, int i) {	
+  	
+	 	if (root == null) {
+	    root = new TernaryNode(name[i]);
+	 	}
+	  if (name[i] < root.character)
+	   root.left = insert(root.left, name, i);
+	  else if (name[i] > root.character)
+	   root.right = insert(root.right, name, i);
+	  else
+	
+	  {
+	   if (i + 1 < name.length)
+	    root.mid = insert(root.mid, name, i + 1);
+	   else
+	    root.isEnd = true;
+	  }
+	  return root;
+	 }
+	
+	 /**
+	  *		preefix search function 
+	  */
+	 public String search(String name) {
+	  StringBuilder build = new StringBuilder();
+	  // Gets the node which has the same characters as the stop name inputed
+	  TernaryNode prefixRoot = nodeTraversal(root, name.toCharArray(), 0);
+	  findAllStops(prefixRoot, "", build, name);
+	  if (build.length() < 1) {
+	   return "No Matching Stop Found";
+	  }
+	  return build.toString();
+	 }
+	
+	 /**
+	  * 		node traversal
+	  */
+	 private TernaryNode nodeTraversal(TernaryNode tNode, char[] name, int ptr)
+	
+	 {
+	  if (tNode == null)
+	   return null;
+	  if (name[ptr] < tNode.character)
+	   return nodeTraversal(tNode.left, name, ptr);
+	  else if (name[ptr] > tNode.character)
+	   return nodeTraversal(tNode.right, name, ptr);
+	  else {
+	   if (ptr == name.length - 1)
+	    return tNode;
+	   else
+	    return nodeTraversal(tNode.mid, name, ptr + 1);
+	
+	  }
+	
+	 }
+	
+	 /**
+	  *            function to find all the stops with  the given prefix.
+	  */
+	 private void findAllStops(TernaryNode tNode, String str, StringBuilder build, String name)
+	
+	 {
+	  if (tNode != null) {
+	   findAllStops(tNode.left, str, build, name);
+	   str = str + tNode.character;
+	   if (tNode.isEnd) {
+	    build.append(name + str.substring(1) + "\n");
+	   }
+	   findAllStops(tNode.mid, str, build, name);
+	   str = str.substring(0, str.length() - 1);
+	   findAllStops(tNode.right, str, build, name);
+	  }
+	
+	 }
+	
+	}
+
+		}
     return null; //return Trips[]
   }
 
